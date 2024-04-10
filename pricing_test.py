@@ -1,4 +1,6 @@
 import pandas as pd
+
+# Define column names
 columns = ['Transaction unique identifier',
            'Price',
            'Date of Transfer',
@@ -15,6 +17,8 @@ columns = ['Transaction unique identifier',
            'Country',
            'PPD Category Type',
            'Record Status - monthly file only']
+
+# Read CSV file with specified column names
 df = pd.read_csv("February_2024_data_dups.txt", delimiter=",",names=columns)
 
 #import subprocess
@@ -23,11 +27,11 @@ df = pd.read_csv("February_2024_data_dups.txt", delimiter=",",names=columns)
 
 # Create new Property ID
 df[columns]=df[columns].fillna("")
-
 df['Property_ID']=df['Postcode']+df['PAON']+df['SAON']+df['Street']+df['Town/City']+df['District']+df['Country']
 df['Property_Entry_Count'] = df.groupby('Property_ID')['Property_ID'].transform('count')
 df = df.sort_values(by=['Property_ID', 'Property_Entry_Count','Date of Transfer'],ascending=True)
 
+# Define mappings
 p_type_dict = { 'D' : 'Detached',
                 'S' : 'Semi-Detached',
                 'T' : 'Terraced',
@@ -52,6 +56,7 @@ record_dict = {
     'D' : 'Delete'
 }
 
+# Apply mappings
 df['Property Type']=df['Property Type'].map(p_type_dict)
 df['Old/New']=df['Old/New'].map(old_new_dict)
 df['Duration']=df['Duration'].map(duration_dict)
@@ -59,6 +64,8 @@ df['PPD Category Type']=df['PPD Category Type'].map(PPD_dict)
 df['Record Status - monthly file only']=df['Record Status - monthly file only'].map(record_dict)
 
 print(df.head(10).to_markdown())
+
+df.to_json('pricing_cleaned.json','records')
 #print(df.dtypes)
 
 
