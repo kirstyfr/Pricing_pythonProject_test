@@ -19,7 +19,7 @@ columns = ['Transaction unique identifier',
            'Record Status - monthly file only']
 
 # Read CSV file with specified column names
-df = pd.read_csv("February_2024_data_dups.txt", delimiter=",",names=columns)
+df = pd.read_csv("February_2024_data_dups.txt", delimiter=",", names=columns)
 
 #import subprocess
 #subprocess.check_call(["pip", "install", "tabulate"])
@@ -27,6 +27,8 @@ df = pd.read_csv("February_2024_data_dups.txt", delimiter=",",names=columns)
 
 # Create new Property ID
 df[columns]=df[columns].fillna("")
+# separate key items with | to identify null placement
+# hashing function, one way function, irreversible. Used for longer IDs or sensitive data.
 df['Property_ID']=df['Postcode']+df['PAON']+df['SAON']+df['Street']+df['Town/City']+df['District']+df['Country']
 df['Property_Entry_Count'] = df.groupby('Property_ID')['Property_ID'].transform('count')
 df = df.sort_values(by=['Property_ID', 'Property_Entry_Count','Date of Transfer'],ascending=True)
